@@ -9,7 +9,7 @@ apply plugin: 'io.spring.dependency-management'
 group = 'com.tlvlp'
 version = '1.0.0'
 sourceCompatibility = '1.8'
-def projectName = 'iot-scheduler'
+def projectName = 'iot-scheduler-service'
 def dockerRepo = 'docker.tlvlp.com'
 def mainClass = 'com.tlvlp.iot.server.scheduler.Application'
 def servicePort = 8300
