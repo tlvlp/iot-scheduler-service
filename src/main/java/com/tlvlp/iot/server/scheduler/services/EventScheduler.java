@@ -19,17 +19,16 @@ public class EventScheduler {
         this.eventExecutor = eventExecutor;
     }
 
-    ScheduledEvent addSchedule(ScheduledEvent event) {
+    String addSchedule(ScheduledEvent event) {
         eventExecutor.setEvent(event);
         String schedulerID = scheduler.schedule(new SchedulingPattern(event.getCronSchedule()), eventExecutor);
-        event.setSchedulerID(schedulerID);
-        log.info("Added event to scheduler: {}", event);
-        return event;
+        log.info("Added event to scheduler. schedulerID: {}", schedulerID);
+        return schedulerID;
     }
 
     void removeSchedule(ScheduledEvent event) {
-        scheduler.deschedule(event.getSchedulerID());
-        event.setSchedulerID("");
-        log.info("Removed event from scheduler: {}", event);
+        String schedulerID = event.getSchedulerID();
+        scheduler.deschedule(schedulerID);
+        log.info("Removed event from scheduler. schedulerID: {}", schedulerID);
     }
 }

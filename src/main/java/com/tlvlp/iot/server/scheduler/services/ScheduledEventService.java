@@ -5,11 +5,14 @@ import com.tlvlp.iot.server.scheduler.persistence.ScheduledEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ScheduledEventService {
@@ -28,56 +31,68 @@ public class ScheduledEventService {
     }
 
     public List<ScheduledEvent> getEventsByExample(ScheduledEvent exampleEvent) {
-        return repository.findAll(Example.of(exampleEvent));
+        return repository.findAll(Example.of(exampleEvent, ExampleMatcher.matching().withIgnoreNullValues()));
     }
 
-    public void postEvent(ScheduledEvent event) throws EventSchedulingException {
+    public ScheduledEvent postEvent(ScheduledEvent event) throws EventException {
         try {
-            checkEventValidity(event);
-            Optional<ScheduledEvent> eventDB = repository.findById(event.getId());
-            if (eventDB.isPresent()) {
-                updateEvent(event);
+            if (null == event.getId()) {
+                return saveNewEvent(event);
             } else {
-                saveNewEvent(event);
+                return updateEvent(event);
             }
-        } catch (EventSchedulingException e) {
+        } catch (EventException e) {
             String err = String.format("Error! Cannot save event: %s", e.getMessage());
             log.error(err);
-            throw new EventSchedulingException(err);
+            throw new EventException(err);
         }
     }
 
-    private void updateEvent(ScheduledEvent event) {
-        eventScheduler.removeSchedule(event);
-        ScheduledEvent updatedSchedule = eventScheduler.addSchedule(event);
-        updatedSchedule.setLastUpdated(LocalDateTime.now());
-        repository.save(updatedSchedule);
-        log.info("Event updated: {}", updatedSchedule);
+    private ScheduledEvent updateEvent(ScheduledEvent event) throws EventException {
+        checkEventValidity(event);
+        Optional<ScheduledEvent> eventDB = repository.findById(event.getId());
+        if (!eventDB.isPresent()) {
+            throw new EventException("Error! Update has failed as Event ID was provided " +
+                    "but not present in the database. For new event generation the ID must not be present.");
+        }
+        eventScheduler.removeSchedule(eventDB.get());
+        event.setSchedulerID(eventScheduler.addSchedule(event));
+        event.setLastUpdated(LocalDateTime.now());
+        repository.save(event);
+        log.info("Event updated: {}", event);
+        return event;
     }
 
-    private void saveNewEvent(ScheduledEvent event) {
-        ScheduledEvent newSchedule = eventScheduler.addSchedule(event);
-        newSchedule.setLastUpdated(LocalDateTime.now());
-        repository.save(newSchedule);
-        log.info("Event saved: {}", newSchedule);
+    private ScheduledEvent saveNewEvent(ScheduledEvent event) throws EventException {
+        event.setId(getNewEventID());
+        checkEventValidity(event);
+        event.setLastUpdated(LocalDateTime.now());
+        event.setSchedulerID(eventScheduler.addSchedule(event));
+        repository.save(event);
+        log.info("Event saved: {}", event);
+        return event;
     }
 
-    private void checkEventValidity(ScheduledEvent event) throws EventSchedulingException {
+    private void checkEventValidity(ScheduledEvent event) throws EventException {
         if (isInvalid(event.getId())) {
-            throw new EventSchedulingException("Invalid event id!");
+            throw new EventException("Invalid event id!");
         } else if (isInvalid(event.getCronSchedule())) {
-            throw new EventSchedulingException("Invalid event cronSchedule!");
+            throw new EventException("Invalid event cronSchedule!");
         } else if (isInvalid(event.getTargetUri())) {
-            throw new EventSchedulingException("Invalid event targetUri!");
+            throw new EventException("Invalid event targetUri!");
         } else if (isInvalid(event.getInfo())) {
-            throw new EventSchedulingException("Invalid event info!");
+            throw new EventException("Invalid event info!");
         } else if (event.getPayload() == null) {
-            throw new EventSchedulingException("Invalid event payload!");
+            throw new EventException("Invalid event payload!");
         }
     }
 
     private Boolean isInvalid(String str) {
         return str != null && !str.isEmpty();
+    }
+
+    private String getNewEventID() {
+        return String.format("%s-%S", LocalDate.now().toString(), UUID.randomUUID().toString());
     }
 
     public void deleteEventById(String id) {
@@ -90,10 +105,10 @@ public class ScheduledEventService {
         log.info("Event cannot be deleted, no such ID: {}", id);
     }
 
-    public void loadEventsFromDB() {
+    public void scheduleAllEventsFromDB() {
         getAllEvents().forEach(event -> {
-            ScheduledEvent scheduledEvent = eventScheduler.addSchedule(event);
-            updateEvent(scheduledEvent);
+            event.setSchedulerID(eventScheduler.addSchedule(event));
+            repository.save(event);
         });
     }
 }

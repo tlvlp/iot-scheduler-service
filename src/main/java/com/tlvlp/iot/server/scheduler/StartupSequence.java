@@ -20,7 +20,7 @@ public class StartupSequence {
     @EventListener(ApplicationReadyEvent.class)
     public void startup() {
         scheduler.start();
-        eventService.loadEventsFromDB();
+        eventService.scheduleAllEventsFromDB();
     }
 
 }

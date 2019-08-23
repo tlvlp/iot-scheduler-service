@@ -1,7 +1,7 @@
 package com.tlvlp.iot.server.scheduler.rpc;
 
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEvent;
-import com.tlvlp.iot.server.scheduler.services.EventSchedulingException;
+import com.tlvlp.iot.server.scheduler.services.EventException;
 import com.tlvlp.iot.server.scheduler.services.ScheduledEventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +30,9 @@ public class ScheduledEventControl {
     @PostMapping("${SCHEDULER_SERVICE_POST_EVENT_CONTROL}")
     public ResponseEntity postEvent(@RequestBody ScheduledEvent event) {
         try {
-            eventService.postEvent(event);
-            return new ResponseEntity(HttpStatus.ACCEPTED);
-        } catch (EventSchedulingException e) {
+            ScheduledEvent processedEvent = eventService.postEvent(event);
+            return new ResponseEntity<>(processedEvent, HttpStatus.OK);
+        } catch (EventException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
