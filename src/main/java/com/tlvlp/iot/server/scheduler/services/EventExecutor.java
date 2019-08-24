@@ -25,6 +25,7 @@ public class EventExecutor extends Task {
 
     @Override
     public void execute(TaskExecutionContext context) throws RuntimeException {
-        apiCallerService.postPayloadToTarget(event.getTargetUri(), event.getPayload());
+        apiCallerService.postPayloadToTarget(event);
+
     }
 }

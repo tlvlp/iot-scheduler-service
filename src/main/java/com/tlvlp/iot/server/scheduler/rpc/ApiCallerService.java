@@ -1,8 +1,11 @@
 package com.tlvlp.iot.server.scheduler.rpc;
 
+import com.tlvlp.iot.server.scheduler.persistence.ScheduledEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,16 +19,19 @@ public class ApiCallerService {
         this.restTemplate = restTemplate;
     }
 
-    public void postPayloadToTarget(String targetUri, String payload) {
+    public void postPayloadToTarget(ScheduledEvent event) {
         try {
+
             restTemplate.postForEntity(
-                    targetUri,
-                    payload,
+                    event.getTargetUri(),
+                    event.getPayload(),
                     String.class
             );
-            log.info("Post sent: {target={}, payload={}}", targetUri, payload);
+            log.info("Event executed: {}", event);
+        } catch (HttpServerErrorException | HttpClientErrorException e) {
+            log.error("Error! Cannot execute event: {} Cause: {}", event, e.getResponseBodyAsString());
         } catch (ResourceAccessException e) {
-            log.warn("Warning! API endpoint is not reachable: {}", targetUri);
+            log.error("Error! Cannot execute event: {} Cause: {}", event, e.getMessage());
         }
     }
 }

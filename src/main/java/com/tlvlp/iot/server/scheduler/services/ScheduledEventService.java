@@ -2,6 +2,7 @@ package com.tlvlp.iot.server.scheduler.services;
 
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEvent;
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEventRepository;
+import it.sauronsoftware.cron4j.SchedulingPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -74,35 +75,41 @@ public class ScheduledEventService {
     }
 
     private void checkEventValidity(ScheduledEvent event) throws EventException {
-        if (isInvalid(event.getId())) {
+        if (!isValidString(event.getId())) {
             throw new EventException("Invalid event id!");
-        } else if (isInvalid(event.getCronSchedule())) {
+        } else if (!isValidString(event.getCronSchedule()) || !isValidCronPattern(event.getCronSchedule())) {
             throw new EventException("Invalid event cronSchedule!");
-        } else if (isInvalid(event.getTargetUri())) {
+        } else if (!isValidString(event.getTargetUri())) {
             throw new EventException("Invalid event targetUri!");
-        } else if (isInvalid(event.getInfo())) {
+        } else if (!isValidString(event.getInfo())) {
             throw new EventException("Invalid event info!");
         } else if (event.getPayload() == null) {
             throw new EventException("Invalid event payload!");
         }
     }
 
-    private Boolean isInvalid(String str) {
+    private Boolean isValidString(String str) {
         return str != null && !str.isEmpty();
+    }
+
+    private Boolean isValidCronPattern(String str) {
+        return SchedulingPattern.validate(str);
     }
 
     private String getNewEventID() {
         return String.format("%s-%S", LocalDate.now().toString(), UUID.randomUUID().toString());
     }
 
-    public void deleteEventById(String id) {
+    public void deleteEventById(ScheduledEvent event) {
+        String id = event.getId();
         Optional<ScheduledEvent> eventDB = repository.findById(id);
         if (eventDB.isPresent()) {
             eventScheduler.removeSchedule(eventDB.get());
             repository.deleteById(id);
             log.info("Event deleted with ID: {}", id);
+        } else {
+            log.info("Event cannot be deleted, no such ID: {}", id);
         }
-        log.info("Event cannot be deleted, no such ID: {}", id);
     }
 
     public void scheduleAllEventsFromDB() {

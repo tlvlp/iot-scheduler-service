@@ -38,8 +38,8 @@ public class ScheduledEventControl {
     }
 
     @DeleteMapping("${SCHEDULER_SERVICE_DELETE_EVENT_BY_ID_CONTROL}")
-    public ResponseEntity deleteEventById(@RequestParam String eventID) {
-        eventService.deleteEventById(eventID);
+    public ResponseEntity deleteEventById(@RequestBody ScheduledEvent event) {
+        eventService.deleteEventById(event);
         return new ResponseEntity(HttpStatus.OK);
 
     }
