@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Objects;
 
 @Document(collection = "events")
@@ -16,7 +17,7 @@ public class ScheduledEvent {
     private String targetUri;
     private String info;
     private LocalDateTime lastUpdated;
-    private Object payload;
+    private Map payload;
 
     @Override
     public String toString() {
@@ -102,11 +103,11 @@ public class ScheduledEvent {
         return this;
     }
 
-    public Object getPayload() {
+    public Map getPayload() {
         return payload;
     }
 
-    public ScheduledEvent setPayload(Object payload) {
+    public ScheduledEvent setPayload(Map payload) {
         this.payload = payload;
         return this;
     }
