@@ -16,8 +16,7 @@ public class ScheduledEvent {
     private String targetUri;
     private String info;
     private LocalDateTime lastUpdated;
-    private String payload;
-
+    private Object payload;
 
     @Override
     public String toString() {
@@ -38,7 +37,6 @@ public class ScheduledEvent {
         if (!(o instanceof ScheduledEvent)) return false;
         ScheduledEvent that = (ScheduledEvent) o;
         return id.equals(that.id) &&
-                schedulerID.equals(that.schedulerID) &&
                 cronSchedule.equals(that.cronSchedule) &&
                 targetUri.equals(that.targetUri) &&
                 info.equals(that.info) &&
@@ -47,7 +45,7 @@ public class ScheduledEvent {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, schedulerID, cronSchedule, targetUri, info, payload);
+        return Objects.hash(id, cronSchedule, targetUri, info, payload);
     }
 
     public String getId() {
@@ -104,11 +102,11 @@ public class ScheduledEvent {
         return this;
     }
 
-    public String getPayload() {
+    public Object getPayload() {
         return payload;
     }
 
-    public ScheduledEvent setPayload(String payload) {
+    public ScheduledEvent setPayload(Object payload) {
         this.payload = payload;
         return this;
     }
