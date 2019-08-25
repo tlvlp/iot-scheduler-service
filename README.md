@@ -10,7 +10,7 @@ This Dockerized SpringBoot-based service is responsible for executing pre-compos
 
 ## Deployment
 - This service is currently designed as **stateful** and should only have one instance running per Docker Swarm Stack.
-- For settings and deployemnt details see the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
+- For settings and deployment details see the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
 
 ## Server-side API
 Actual API endpoints are inherited from the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment) via environment variables.
