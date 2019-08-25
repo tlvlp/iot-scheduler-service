@@ -4,9 +4,9 @@
 Part of the tlvlp IoT project's server side microservices.
 
 This Dockerized SpringBoot-based service is responsible for executing pre-composed API calls timed with CRON schedules.
-* Crates, modifies, lists and deletes scheduled events
-* Persists events to the database and re-schedules them on startup
-* Executes API calls to given endpoints with given payloads
+- Crates, modifies, lists and deletes scheduled events
+- Persists events to the database and re-schedules them on startup
+- Executes API calls to given endpoints with given payloads
 
 ## Deployment
 - This service is currently designed as **stateful** and should only have one instance running per Docker Swarm Stack.
