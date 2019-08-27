@@ -9,25 +9,25 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-public class ScheduledEventControl {
+public class ScheduledEventAPI {
 
     private ScheduledEventService eventService;
 
-    public ScheduledEventControl(ScheduledEventService eventService) {
+    public ScheduledEventAPI(ScheduledEventService eventService) {
         this.eventService = eventService;
     }
 
-    @GetMapping("${SCHEDULER_SERVICE_EVENT_LIST_ALL_CONTROL}")
+    @GetMapping("${SCHEDULER_SERVICE_API_LIST_ALL_EVENT}")
     public ResponseEntity getAllEvents() {
         return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
     }
 
-    @GetMapping("${SCHEDULER_SERVICE_EVENT_LIST_BY_EXAMPLE_CONTROL}")
+    @GetMapping("${SCHEDULER_SERVICE_API_LIST_EVENTS_BY_EXAMPLE}")
     public ResponseEntity getEventsByExample(@RequestBody ScheduledEvent exampleEvent) {
         return new ResponseEntity<>(eventService.getEventsByExample(exampleEvent), HttpStatus.OK);
     }
 
-    @PostMapping("${SCHEDULER_SERVICE_POST_EVENT_CONTROL}")
+    @PostMapping("${SCHEDULER_SERVICE_API_POST_EVENT}")
     public ResponseEntity createEvent(@RequestBody ScheduledEvent event) {
         try {
             ScheduledEvent processedEvent = eventService.createEvent(event);
@@ -37,7 +37,7 @@ public class ScheduledEventControl {
         }
     }
 
-    @DeleteMapping("${SCHEDULER_SERVICE_DELETE_EVENT_BY_ID_CONTROL}")
+    @DeleteMapping("${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID}")
     public ResponseEntity deleteEventById(@RequestBody ScheduledEvent event) {
         eventService.deleteEventById(event);
         return new ResponseEntity(HttpStatus.OK);

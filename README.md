@@ -21,8 +21,8 @@ Returns a list of Events that match all values in the example
 
 
 #### Related environment variables:
-- ${SCHEDULER_SERVICE_EVENT_LIST_BY_EXAMPLE_CONTROL}
-- ${SCHEDULER_SERVICE_EVENT_LIST_BY_EXAMPLE_CONTROL_URI}
+- ${SCHEDULER_SERVICE_API_LIST_EVENTS_BY_EXAMPLE}
+- ${SCHEDULER_SERVICE_API_LIST_EVENTS_BY_EXAMPLE_URL}
 
 #### Fields:
 Takes a ScheduledEvent object in the RequestBody where all the empty fields are ignored
@@ -75,8 +75,8 @@ Get all the events that are scheduled for 9am every day and target the below URI
 Returns all the Events
 
 #### Related global variables:
-- ${SCHEDULER_SERVICE_EVENT_LIST_ALL_CONTROL}
-- ${SCHEDULER_SERVICE_EVENT_LIST_ALL_CONTROL_URI}
+- ${SCHEDULER_SERVICE_API_LIST_ALL_EVENT}
+- ${SCHEDULER_SERVICE_API_LIST_ALL_EVENT_URL}
 
 #### Fields:
 Takes no arguments.
@@ -87,8 +87,8 @@ Takes no arguments.
 Creates a new ScheduledEvent or updates and existing one and returns it for later reference.
 
 #### Related global variables:
-- ${SCHEDULER_SERVICE_POST_EVENT_CONTROL}
-- ${SCHEDULER_SERVICE_POST_EVENT_CONTROL_URI}
+- ${SCHEDULER_SERVICE_API_POST_EVENT}
+- ${SCHEDULER_SERVICE_API_POST_EVENT_URL}
 
 #### Fields:
 - Takes a ScheduledEvent object in the RequestBody. See the "GET Events by example" section for field details.
@@ -144,8 +144,8 @@ to the MQTT Client service and it contains another message to be forwarded to th
 Deletes an Event 
 
 #### Related global variables:
-- ${SCHEDULER_SERVICE_DELETE_EVENT_BY_ID_CONTROL}
-- ${SCHEDULER_SERVICE_DELETE_EVENT_BY_ID_CONTROL_URI}
+- ${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID}
+- ${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID_URL}
 
 #### Fields:
 Takes a ScheduledEvent object but only requires the **eventID** field and the rest is ignored.
