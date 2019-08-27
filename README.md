@@ -26,10 +26,10 @@ Returns a list of Events that match all values in the example
 
 #### Fields:
 Takes a ScheduledEvent object in the RequestBody where all the empty fields are ignored
-- **id**: String - event ID
+- **eventID**: String - event ID
 - **schedulerID**: String - the ID assigned by the scheduler
 - **cronSchedule**: String - must be a valid CRON expression (cron4j)
-- **targetUri**: String - targeted API endpoint
+- **targetURL**: String - targeted API endpoint
 - **info**: String - a human readable information about the scheduled event
 - **lastUpdated**: LocalDateTime of the last update
 - **payload**: Map<String, String> containing the payload to be delivered to the **targetUri** 
@@ -38,9 +38,9 @@ Takes a ScheduledEvent object in the RequestBody where all the empty fields are 
 Get one event by sending a ScheduledEvent object:
 ```
 {
-    "id": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
+    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
     "cronSchedule": "* * * * *",
-    "targetUri": "http://mqtt-client:8100/messages",
+    "targetURL": "http://mqtt-client:8100/messages",
     "info": "Posts an mqtt message every minute",
     "payload": {
         "topic": "/global/test",
@@ -57,7 +57,7 @@ Get one event by sending a ScheduledEvent object:
 Get one event with a specific ID:
 ```
 {
-    "id": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC"
+    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC"
 }
 ```
 
@@ -65,7 +65,7 @@ Get all the events that are scheduled for 9am every day and target the below URI
 ```
 {
     "cronSchedule": "* 9 * * *",
-    "targetUri": "http://mqtt-client:8100/messages"
+    "targetURL": "http://mqtt-client:8100/messages"
 }
 
 ```
@@ -92,20 +92,20 @@ Creates a new ScheduledEvent or updates and existing one and returns it for late
 
 #### Fields:
 - Takes a ScheduledEvent object in the RequestBody. See the "GET Events by example" section for field details.
-- If the **id** is included then the event with the matching ID will be updated.
+- If the **eventID** is included then the event with the matching ID will be updated.
 - **schedulerID** and **lastUpdated** fields are ignored and automatically repopulated on a successful request.
 - Note that in the example there is a payload object inside the **payload** field as this is a message to be posted 
 to the MQTT Client service and it contains another message to be forwarded to the units.
 
 #### Create a new schedule
 - **cronSchedule**
-- **targetUri**
+- **targetURL**
 - **info**
 - **payload**
 ```
 {
     "cronSchedule": "* * * * *",
-    "targetUri": "http://mqtt-client:8100/messages",
+    "targetURL": "http://mqtt-client:8100/messages",
     "info": "Posts an mqtt message every minute",
     "payload": {
         "topic": "/global/test",
@@ -118,16 +118,16 @@ to the MQTT Client service and it contains another message to be forwarded to th
 ```
 
 #### Update an existing schedule
-- **id**
+- **eventID**
 - **cronSchedule**
-- **targetUri**
+- **targetURL**
 - **info**
 - **payload**
 ```
 {
-    "id": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
+    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
     "cronSchedule": "* * * * *",
-    "targetUri": "http://mqtt-client:8100/messages",
+    "targetURL": "http://mqtt-client:8100/messages",
     "info": "Posts an mqtt message every minute",
     "payload": {
         "topic": "/global/test",
@@ -139,7 +139,7 @@ to the MQTT Client service and it contains another message to be forwarded to th
 }
 ```
 
-### DELETE event by ID:
+### DELETE event by eventID:
 
 Deletes an Event 
 
@@ -148,9 +148,9 @@ Deletes an Event
 - ${SCHEDULER_SERVICE_DELETE_EVENT_BY_ID_CONTROL_URI}
 
 #### Fields:
-Takes a ScheduledEvent object but only requires the **id** field and the rest is ignored.
+Takes a ScheduledEvent object but only requires the **eventID** field and the rest is ignored.
 ```
 {
-    "id": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC"
+    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC"
 }
 ```
