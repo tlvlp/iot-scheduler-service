@@ -11,10 +11,10 @@ import java.util.Objects;
 public class ScheduledEvent {
 
     @Id
-    private String id;
+    private String eventID;
     private String schedulerID;
     private String cronSchedule;
-    private String targetUri;
+    private String targetURL;
     private String info;
     private LocalDateTime lastUpdated;
     private Map payload;
@@ -22,10 +22,10 @@ public class ScheduledEvent {
     @Override
     public String toString() {
         return "ScheduledEvent{" +
-                "id='" + id + '\'' +
+                "eventID='" + eventID + '\'' +
                 ", schedulerID='" + schedulerID + '\'' +
                 ", cronSchedule='" + cronSchedule + '\'' +
-                ", targetUri='" + targetUri + '\'' +
+                ", targetURL='" + targetURL + '\'' +
                 ", info='" + info + '\'' +
                 ", lastUpdated=" + lastUpdated +
                 ", payload=" + payload +
@@ -37,24 +37,24 @@ public class ScheduledEvent {
         if (this == o) return true;
         if (!(o instanceof ScheduledEvent)) return false;
         ScheduledEvent that = (ScheduledEvent) o;
-        return id.equals(that.id) &&
+        return eventID.equals(that.eventID) &&
                 cronSchedule.equals(that.cronSchedule) &&
-                targetUri.equals(that.targetUri) &&
+                targetURL.equals(that.targetURL) &&
                 info.equals(that.info) &&
                 payload.equals(that.payload);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, cronSchedule, targetUri, info, payload);
+        return Objects.hash(eventID, cronSchedule, targetURL, info, payload);
     }
 
-    public String getId() {
-        return id;
+    public String getEventID() {
+        return eventID;
     }
 
-    public ScheduledEvent setId(String id) {
-        this.id = id;
+    public ScheduledEvent setEventID(String eventID) {
+        this.eventID = eventID;
         return this;
     }
 
@@ -76,12 +76,12 @@ public class ScheduledEvent {
         return this;
     }
 
-    public String getTargetUri() {
-        return targetUri;
+    public String getTargetURL() {
+        return targetURL;
     }
 
-    public ScheduledEvent setTargetUri(String targetUri) {
-        this.targetUri = targetUri;
+    public ScheduledEvent setTargetURL(String targetURL) {
+        this.targetURL = targetURL;
         return this;
     }
 

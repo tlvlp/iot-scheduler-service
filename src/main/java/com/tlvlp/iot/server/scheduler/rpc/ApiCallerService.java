@@ -23,7 +23,7 @@ public class ApiCallerService {
         try {
 
             restTemplate.postForEntity(
-                    event.getTargetUri(),
+                    event.getTargetURL(),
                     event.getPayload(),
                     String.class
             );

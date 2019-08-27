@@ -9,6 +9,9 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,56 +38,31 @@ public class ScheduledEventService {
         return repository.findAll(Example.of(exampleEvent, ExampleMatcher.matching().withIgnoreNullValues()));
     }
 
-    public ScheduledEvent postEvent(ScheduledEvent event) throws EventException {
-        try {
-            if (null == event.getId()) {
-                return saveNewEvent(event);
-            } else {
-                return updateEvent(event);
-            }
-        } catch (EventException e) {
-            String err = String.format("Error! Cannot save event: %s", e.getMessage());
-            log.error(err);
-            throw new EventException(err);
-        }
-    }
-
-    private ScheduledEvent updateEvent(ScheduledEvent event) throws EventException {
+    public ScheduledEvent createEvent(ScheduledEvent event) throws EventException, IllegalArgumentException {
         checkEventValidity(event);
-        Optional<ScheduledEvent> eventDB = repository.findById(event.getId());
-        if (!eventDB.isPresent()) {
-            throw new EventException("Error! Update has failed as Event ID was provided " +
-                    "but not present in the database. For new event generation the ID must not be present.");
+        String eventID = event.getEventID();
+        if (isValidString(eventID)) {
+            event.setEventID(getNewEventID());
+        } else {
+            Optional<ScheduledEvent> eventDB = repository.findById(eventID);
+            eventDB.ifPresent(e -> eventScheduler.removeSchedule(e));
         }
-        eventScheduler.removeSchedule(eventDB.get());
         event.setSchedulerID(eventScheduler.addSchedule(event));
         event.setLastUpdated(LocalDateTime.now());
-        repository.save(event);
-        log.info("Event updated: {}", event);
-        return event;
-    }
-
-    private ScheduledEvent saveNewEvent(ScheduledEvent event) throws EventException {
-        event.setId(getNewEventID());
-        checkEventValidity(event);
-        event.setLastUpdated(LocalDateTime.now());
-        event.setSchedulerID(eventScheduler.addSchedule(event));
         repository.save(event);
         log.info("Event saved: {}", event);
         return event;
     }
 
     private void checkEventValidity(ScheduledEvent event) throws EventException {
-        if (!isValidString(event.getId())) {
-            throw new EventException("Invalid event id!");
-        } else if (!isValidString(event.getCronSchedule()) || !isValidCronPattern(event.getCronSchedule())) {
-            throw new EventException("Invalid event cronSchedule!");
-        } else if (!isValidString(event.getTargetUri())) {
-            throw new EventException("Invalid event targetUri!");
+        if (!isValidString(event.getCronSchedule()) || !isValidCronPattern(event.getCronSchedule())) {
+            throw new EventException("Event cronSchedule must be a valid String and CRON pattern!");
+        } else if (!isValidURL(event.getTargetURL())) {
+            throw new EventException("Event targetURI must be a valid URL!");
         } else if (!isValidString(event.getInfo())) {
-            throw new EventException("Invalid event info!");
+            throw new EventException("Event info must be a valid String!");
         } else if (event.getPayload() == null) {
-            throw new EventException("Invalid event payload!");
+            throw new EventException("Event payload must be a valid String!");
         }
     }
 
@@ -96,12 +74,21 @@ public class ScheduledEventService {
         return SchedulingPattern.validate(str);
     }
 
+    private Boolean isValidURL(String str) {
+        try {
+            new URL(str).toURI();
+            return true;
+        } catch (MalformedURLException | URISyntaxException e) {
+            return false;
+        }
+    }
+
     private String getNewEventID() {
         return String.format("%s-%S", LocalDate.now().toString(), UUID.randomUUID().toString());
     }
 
     public void deleteEventById(ScheduledEvent event) {
-        String id = event.getId();
+        String id = event.getEventID();
         Optional<ScheduledEvent> eventDB = repository.findById(id);
         if (eventDB.isPresent()) {
             eventScheduler.removeSchedule(eventDB.get());
