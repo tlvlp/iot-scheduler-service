@@ -100,6 +100,9 @@ public class ScheduledEventService {
     }
 
     public void scheduleAllEventsFromDB() {
+        List<ScheduledEvent> allEvents = getAllEvents();
+        int eventNum = allEvents.size();
+        log.info("Scheduling events from the database: {}", eventNum);
         getAllEvents().forEach(event -> {
             event.setSchedulerID(eventScheduler.addSchedule(event));
             repository.save(event);
