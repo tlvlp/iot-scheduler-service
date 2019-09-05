@@ -8,6 +8,11 @@ This Dockerized SpringBoot-based service is responsible for executing pre-compos
 - Persists events to the database and re-schedules them on startup
 - Executes API calls to given endpoints with given payloads
 
+## Building and publishing JAR + Docker image
+This project is using the using the [Palantir Docker Gradle plugin](https://github.com/palantir/gradle-docker).
+All configuration can be found in the [Gradle build file](build.gradle) file 
+and is recommended to be run with the docker/dockerTagsPush task.
+
 ## Deployment
 - This service is currently designed as **stateful** and should only have one instance running per Docker Swarm Stack.
 - For settings and deployment details see the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
