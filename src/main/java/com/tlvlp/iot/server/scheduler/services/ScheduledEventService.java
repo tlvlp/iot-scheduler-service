@@ -41,7 +41,7 @@ public class ScheduledEventService {
     public ScheduledEvent createEvent(ScheduledEvent event) throws EventException, IllegalArgumentException {
         checkEventValidity(event);
         String eventID = event.getEventID();
-        if (isValidString(eventID)) {
+        if (!isValidString(eventID)) {
             event.setEventID(getNewEventID());
         } else {
             Optional<ScheduledEvent> eventDB = repository.findById(eventID);
