@@ -35,18 +35,14 @@ public class ScheduledEvent {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ScheduledEvent)) return false;
-        ScheduledEvent that = (ScheduledEvent) o;
-        return eventID.equals(that.eventID) &&
-                cronSchedule.equals(that.cronSchedule) &&
-                targetURL.equals(that.targetURL) &&
-                info.equals(that.info) &&
-                payload.equals(that.payload);
+        if (o == null || getClass() != o.getClass()) return false;
+        ScheduledEvent event = (ScheduledEvent) o;
+        return eventID.equals(event.eventID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventID, cronSchedule, targetURL, info, payload);
+        return Objects.hash(eventID);
     }
 
     public String getEventID() {

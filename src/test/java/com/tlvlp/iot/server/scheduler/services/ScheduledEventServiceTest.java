@@ -3,7 +3,6 @@ package com.tlvlp.iot.server.scheduler.services;
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEvent;
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEventRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -136,14 +135,12 @@ class ScheduledEventServiceTest {
         assertThrows(EventException.class, () -> scheduledEventService.createEvent(event));
     }
 
-
-    @Disabled //TODO: repository.findall() double call error
     @Test
     @DisplayName("Schedule persisted events on startup")
     void scheduleAllEventsFromDB() {
         // given
         String newSchedulerID = "id";
-        List<ScheduledEvent> allEvents = Arrays.asList(new ScheduledEvent(), new ScheduledEvent(), new ScheduledEvent());
+        List<ScheduledEvent> allEvents = Arrays.asList(event, event, event);
         given(repository.findAll()).willReturn(allEvents);
         given(eventScheduler.addSchedule(any(ScheduledEvent.class))).willReturn(newSchedulerID);
         given(repository.save(any(ScheduledEvent.class))).willReturn(new ScheduledEvent());
@@ -152,14 +149,29 @@ class ScheduledEventServiceTest {
         scheduledEventService.scheduleAllEventsFromDB();
 
         // then
-//        then(repository).should().findAll();
-        then(eventScheduler).should().addSchedule(new ScheduledEvent());
+        then(repository).should().findAll();
+        then(eventScheduler).should(times(3)).addSchedule(any(ScheduledEvent.class));
         then(repository).should(times(3)).save(captor.capture());
         for (ScheduledEvent savedEvent : captor.getAllValues()) {
             assertNotNull(savedEvent, "Event is not null");
             assertEquals(savedEvent.getSchedulerID(), newSchedulerID,
                     "Scheduler ID is updated to the one provided by the Event Scheduler");
         }
+
+    }
+
+    @Test
+    void deleteEventById() {
+        // given
+        String eventID = "eventID";
+        given(repository.findById(eventID)).willReturn(Optional.of(event));
+
+        // when
+        scheduledEventService.deleteEventById(eventID);
+
+        // then
+        then(eventScheduler).should().removeSchedule(any(ScheduledEvent.class));
+        then(repository).should().deleteById(eventID);
 
     }
 }

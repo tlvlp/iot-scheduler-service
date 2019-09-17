@@ -87,15 +87,14 @@ public class ScheduledEventService {
         return String.format("%s-%S", LocalDate.now().toString(), UUID.randomUUID().toString());
     }
 
-    public void deleteEventById(ScheduledEvent event) {
-        String id = event.getEventID();
-        Optional<ScheduledEvent> eventDB = repository.findById(id);
+    public void deleteEventById(String eventID) {
+        Optional<ScheduledEvent> eventDB = repository.findById(eventID);
         if (eventDB.isPresent()) {
             eventScheduler.removeSchedule(eventDB.get());
-            repository.deleteById(id);
-            log.info("Event deleted with ID: {}", id);
+            repository.deleteById(eventID);
+            log.info("Event deleted with ID: {}", eventID);
         } else {
-            log.info("Event cannot be deleted, no such ID: {}", id);
+            log.info("Event cannot be deleted, no such ID: {}", eventID);
         }
     }
 
@@ -103,7 +102,7 @@ public class ScheduledEventService {
         List<ScheduledEvent> allEvents = getAllEvents();
         int eventNum = allEvents.size();
         log.info("Scheduling events from the database: {}", eventNum);
-        getAllEvents().forEach(event -> {
+        allEvents.forEach(event -> {
             event.setSchedulerID(eventScheduler.addSchedule(event));
             repository.save(event);
         });

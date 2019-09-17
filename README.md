@@ -153,7 +153,7 @@ Deletes an Event
 - ${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID_URL}
 
 #### Fields:
-Takes a ScheduledEvent object but only requires the **eventID** field and the rest is ignored.
+Takes aa String with the **eventID**.
 ```
 {
     "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC"

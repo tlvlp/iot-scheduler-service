@@ -38,8 +38,8 @@ public class ScheduledEventAPI {
     }
 
     @DeleteMapping("${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID}")
-    public ResponseEntity deleteEventById(@RequestBody ScheduledEvent event) {
-        eventService.deleteEventById(event);
+    public ResponseEntity deleteEventById(@RequestParam String eventID) {
+        eventService.deleteEventById(eventID);
         return new ResponseEntity(HttpStatus.OK);
 
     }
