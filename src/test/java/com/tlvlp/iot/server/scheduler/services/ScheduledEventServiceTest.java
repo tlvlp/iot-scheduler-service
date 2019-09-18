@@ -36,9 +36,9 @@ class ScheduledEventServiceTest {
     @InjectMocks
     private ScheduledEventService scheduledEventService;
 
-
     @Captor
     private ArgumentCaptor<ScheduledEvent> captor;
+
     private ScheduledEvent event;
 
     @BeforeEach

@@ -84,7 +84,7 @@ public class ScheduledEventService {
     }
 
     private String getNewEventID() {
-        return String.format("%s-%S", LocalDate.now().toString(), UUID.randomUUID().toString());
+        return String.format("%s-EVENT-%S", LocalDate.now().toString(), UUID.randomUUID().toString());
     }
 
     public void deleteEventById(String eventID) {
