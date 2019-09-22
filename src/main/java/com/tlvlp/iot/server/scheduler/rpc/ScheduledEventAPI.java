@@ -30,8 +30,7 @@ public class ScheduledEventAPI {
     @PostMapping("${SCHEDULER_SERVICE_API_POST_EVENT}")
     public ResponseEntity createEvent(@RequestBody ScheduledEvent event) {
         try {
-            ScheduledEvent processedEvent = eventService.createEvent(event);
-            return new ResponseEntity<>(processedEvent, HttpStatus.OK);
+            return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.OK);
         } catch (EventException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
