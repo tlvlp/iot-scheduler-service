@@ -22,15 +22,14 @@ Actual API endpoints are inherited from the project's [deployment repository](ht
 
 ### GET Events by example:
 
-Returns a list of Events that match all values in the example
-
+Returns a list of Events that match all values in the example.
+All the empty fields are ignored
 
 #### Related environment variables:
 - ${SCHEDULER_SERVICE_API_LIST_EVENTS_BY_EXAMPLE}
-- ${SCHEDULER_SERVICE_API_LIST_EVENTS_BY_EXAMPLE_URL}
 
-#### Fields:
-Takes a ScheduledEvent object in the RequestBody where all the empty fields are ignored
+#### Input:
+RequestBody:
 - **eventID**: String - event ID
 - **schedulerID**: String - the ID assigned by the scheduler
 - **cronSchedule**: String - must be a valid CRON expression (cron4j)
@@ -56,7 +55,6 @@ Get one event by sending a ScheduledEvent object:
     }
 }
 
-
 ```
 
 Get one event with a specific ID:
@@ -74,17 +72,24 @@ Get all the events that are scheduled for 9am every day and target the below URI
 }
 
 ```
+#### Output:
+
+The list of events matching the query or an empty list
+
+
 
 ### GET All events:
 
-Returns all the Events
+Returns all the Events in the database
 
 #### Related global variables:
 - ${SCHEDULER_SERVICE_API_LIST_ALL_EVENT}
-- ${SCHEDULER_SERVICE_API_LIST_ALL_EVENT_URL}
 
-#### Fields:
+#### Input:
 Takes no arguments.
+
+#### Output:
+The list of events matching the query or an empty list
 
 
 ### POST Create or modify events:
@@ -93,20 +98,21 @@ Creates a new ScheduledEvent or updates and existing one and returns it for late
 
 #### Related global variables:
 - ${SCHEDULER_SERVICE_API_POST_EVENT}
-- ${SCHEDULER_SERVICE_API_POST_EVENT_URL}
 
-#### Fields:
-- Takes a ScheduledEvent object in the RequestBody. See the "GET Events by example" section for field details.
-- If the **eventID** is included then the event with the matching ID will be updated.
+#### Input:
+RequestBody:
+- **eventID**: String - event ID. _NOTE_: if it's included then the event with the matching ID will be updated.
+- **schedulerID**: String - the ID assigned by the scheduler
+- **cronSchedule**: String - must be a valid CRON expression (cron4j)
+- **targetURL**: String - targeted API endpoint
+- **info**: String - a human readable information about the scheduled event
+- **lastUpdated**: LocalDateTime of the last update
+- **payload**: Map<String, String> containing the payload to be delivered to the **targetUri** 
 - **schedulerID** and **lastUpdated** fields are ignored and automatically repopulated on a successful request.
-- Note that in the example there is a payload object inside the **payload** field as this is a message to be posted 
-to the MQTT Client service and it contains another message to be forwarded to the units.
 
-#### Create a new schedule
-- **cronSchedule**
-- **targetURL**
-- **info**
-- **payload**
+
+#### Create a new schedule (note the lack of eventID!)
+RequestBody:
 ```
 {
     "cronSchedule": "* * * * *",
@@ -123,11 +129,7 @@ to the MQTT Client service and it contains another message to be forwarded to th
 ```
 
 #### Update an existing schedule
-- **eventID**
-- **cronSchedule**
-- **targetURL**
-- **info**
-- **payload**
+RequestBody:
 ```
 {
     "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
@@ -144,18 +146,20 @@ to the MQTT Client service and it contains another message to be forwarded to th
 }
 ```
 
+#### Output:
+The created or updated event (in the same format as above)
+
+
 ### DELETE event by eventID:
 
 Deletes an Event 
 
 #### Related global variables:
 - ${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID}
-- ${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID_URL}
 
-#### Fields:
-Takes aa String with the **eventID**.
-```
-{
-    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC"
-}
-```
+#### Input:
+RequestParam: Takes a String with the **eventID** 298d4387ecd2bf6d47785931efe8db5b2795a73a.
+
+
+#### Output:
+Acknowledgement with a Http response (200)
