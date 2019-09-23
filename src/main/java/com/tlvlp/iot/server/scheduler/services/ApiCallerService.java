@@ -1,4 +1,4 @@
-package com.tlvlp.iot.server.scheduler.rpc;
+package com.tlvlp.iot.server.scheduler.services;
 
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEvent;
 import org.slf4j.Logger;
