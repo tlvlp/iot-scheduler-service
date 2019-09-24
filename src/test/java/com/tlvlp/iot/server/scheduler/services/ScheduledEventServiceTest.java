@@ -199,17 +199,17 @@ class ScheduledEventServiceTest {
     }
 
     @Test
-    void deleteEventById() {
+    void deleteEventById() throws EventException {
         // given
-        var eventID = "eventID";
-        given(repository.findById(eventID)).willReturn(Optional.of(event));
+        event.setEventID("eventID");
+        given(repository.findById(anyString())).willReturn(Optional.of(event));
 
         // when
-        scheduledEventService.deleteEventById(eventID);
+        scheduledEventService.deleteEvent(event);
 
         // then
         then(eventScheduler).should().removeSchedule(any(ScheduledEvent.class));
-        then(repository).should().deleteById(eventID);
+        then(repository).should().deleteById(event.getEventID());
 
     }
 

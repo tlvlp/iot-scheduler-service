@@ -108,16 +108,21 @@ RequestBody:
 The eventID of the created / updated event
 
 
-### DELETE event by eventID:
+### POST Delete event by eventID:
 
 Deletes an Event 
 
 #### Related global variables:
-- ${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID}
+- ${SCHEDULER_SERVICE_API_DELETE_EVENT}
 
 #### Input:
-RequestParam: Takes a String with the **eventID**.
-
+RequestBody:
+```
+{
+    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
+    ...
+}
+```
 
 #### Output:
-Acknowledgement with a Http response (200)
+The eventID of the deleted event

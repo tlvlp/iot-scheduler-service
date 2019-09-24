@@ -5,7 +5,9 @@ import com.tlvlp.iot.server.scheduler.services.EventException;
 import com.tlvlp.iot.server.scheduler.services.ScheduledEventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -28,11 +30,13 @@ public class ScheduledEventAPI {
         }
     }
 
-    @DeleteMapping("${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID}")
-    public ResponseEntity deleteEventById(@RequestParam String eventID) {
-        eventService.deleteEventById(eventID);
-        return new ResponseEntity(HttpStatus.OK);
-
+    @PostMapping("${SCHEDULER_SERVICE_API_DELETE_EVENT}")
+    public ResponseEntity<String> deleteEvent(@RequestBody ScheduledEvent event) {
+        try {
+            return new ResponseEntity<>(eventService.deleteEvent(event), HttpStatus.OK);
+        } catch (EventException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @PostMapping("${SCHEDULER_SERVICE_API_GET_EVENTS_FROM_LIST}")
