@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -49,6 +50,43 @@ class ScheduledEventServiceTest {
                 .setPayload(Collections.singletonMap("test", "value"))
                 .setTargetURL("http://test");
     }
+
+    @Test
+    @DisplayName("Get all events from list when all events are present in the database")
+    void getAllEventsFromList_AllEventPresent() {
+        // given
+        var eventIDList = List.of("eventID_1", "eventID_2", "eventID_3");
+        given(repository.findById(anyString())).willReturn(Optional.of(new ScheduledEvent()));
+
+        // when
+        var eventList = scheduledEventService.getAllEventsFromList(eventIDList);
+
+        // then
+        then(repository).should(times(3)).findById(anyString());
+        assertNotNull(eventList);
+        assertEquals(3, eventList.size(), "The list should contain all the valid results");
+    }
+
+    @Test
+    @DisplayName("Get all events from list and leave out the ones that are not present in the database")
+    void getAllEventsFromList_MissingEvent() {
+        // given
+        var eventIDList = List.of("eventID_1", "eventID_2");
+        given(repository.findById("eventID_1")).willReturn(Optional.of(new ScheduledEvent()));
+        given(repository.findById("eventID_2")).willReturn(Optional.empty());
+
+
+        // when
+        var eventList = scheduledEventService.getAllEventsFromList(eventIDList);
+
+        System.out.println(eventList);
+
+        // then
+        then(repository).should(times(2)).findById(anyString());
+        assertNotNull(eventList);
+        assertEquals(1, eventList.size(), "The list should only contain the results in the database");
+    }
+
 
 
     @Test
@@ -174,4 +212,5 @@ class ScheduledEventServiceTest {
         then(repository).should().deleteById(eventID);
 
     }
+
 }

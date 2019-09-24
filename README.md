@@ -20,76 +20,34 @@ and is recommended to be run with the docker/dockerTagsPush task.
 ## Server-side API
 Actual API endpoints are inherited from the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment) via environment variables.
 
-### GET Events by example:
+### POST Get All Events from eventID List:
 
-Returns a list of Events that match all values in the example.
-All the empty fields are ignored
+Takes a list of eventIds and returns the corresponding events
 
 #### Related environment variables:
-- ${SCHEDULER_SERVICE_API_LIST_EVENTS_BY_EXAMPLE}
+- ${SCHEDULER_SERVICE_API_GET_EVENTS_FROM_LIST}
 
 #### Input:
 RequestBody:
-- **eventID**: String - event ID
-- **schedulerID**: String - the ID assigned by the scheduler
-- **cronSchedule**: String - must be a valid CRON expression (cron4j)
-- **targetURL**: String - targeted API endpoint
-- **info**: String - a human readable information about the scheduled event
-- **lastUpdated**: LocalDateTime of the last update
-- **payload**: Map<String, String> containing the payload to be delivered to the **targetUri** 
-- **schedulerID** and **lastUpdated** fields are ignored and automatically repopulated on a successful request.
+- List<**eventID**>: String - event ID
 
-Get one event by sending a ScheduledEvent object:
 ```
 {
-    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
-    "cronSchedule": "* * * * *",
-    "targetURL": "http://mqtt-client:8100/messages",
-    "info": "Posts an mqtt message every minute",
-    "payload": {
-        "topic": "/global/test",
-        "payload": {
-            "much": "payload",
-            "even": "better"
-        }
-    }
+    ["eventID_1", "eventID_2", "eventID_3"]  
 }
 
 ```
 
-Get one event with a specific ID:
-```
-{
-    "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC"
-}
-```
-
-Get all the events that are scheduled for 9am every day and target the below URI:
-```
-{
-    "cronSchedule": "* 9 * * *",
-    "targetURL": "http://mqtt-client:8100/messages"
-}
-
-```
 #### Output:
 
-The list of events matching the query or an empty list
+The list of events matching the eventIDs
 
+```
+{
+    [ {..}, {..}, {..} ]  
+}
 
-
-### GET All events:
-
-Returns all the Events in the database
-
-#### Related global variables:
-- ${SCHEDULER_SERVICE_API_LIST_ALL_EVENT}
-
-#### Input:
-Takes no arguments.
-
-#### Output:
-The list of events matching the query or an empty list
+```
 
 
 ### POST Create or modify events:
@@ -158,7 +116,7 @@ Deletes an Event
 - ${SCHEDULER_SERVICE_API_DELETE_EVENT_BY_ID}
 
 #### Input:
-RequestParam: Takes a String with the **eventID** 298d4387ecd2bf6d47785931efe8db5b2795a73a.
+RequestParam: Takes a String with the **eventID**.
 
 
 #### Output:

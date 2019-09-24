@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 public class ScheduledEventAPI {
 
@@ -17,18 +19,8 @@ public class ScheduledEventAPI {
         this.eventService = eventService;
     }
 
-    @GetMapping("${SCHEDULER_SERVICE_API_LIST_ALL_EVENT}")
-    public ResponseEntity getAllEvents() {
-        return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
-    }
-
-    @GetMapping("${SCHEDULER_SERVICE_API_LIST_EVENTS_BY_EXAMPLE}")
-    public ResponseEntity getEventsByExample(@RequestBody ScheduledEvent exampleEvent) {
-        return new ResponseEntity<>(eventService.getEventsByExample(exampleEvent), HttpStatus.OK);
-    }
-
     @PostMapping("${SCHEDULER_SERVICE_API_POST_EVENT}")
-    public ResponseEntity createOrUpdateEvent(@RequestBody ScheduledEvent event) {
+    public ResponseEntity<String> createOrUpdateEvent(@RequestBody ScheduledEvent event) {
         try {
             return new ResponseEntity<>(eventService.createOrUpdateEvent(event), HttpStatus.OK);
         } catch (EventException e) {
@@ -41,6 +33,11 @@ public class ScheduledEventAPI {
         eventService.deleteEventById(eventID);
         return new ResponseEntity(HttpStatus.OK);
 
+    }
+
+    @PostMapping("${SCHEDULER_SERVICE_API_GET_EVENTS_FROM_LIST}")
+    public ResponseEntity<List<ScheduledEvent>> getAllEventsFromList(@RequestBody List<String> eventIDList) {
+        return new ResponseEntity<>(eventService.getAllEventsFromList(eventIDList), HttpStatus.OK);
     }
 
 }

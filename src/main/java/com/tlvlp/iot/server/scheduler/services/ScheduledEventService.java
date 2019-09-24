@@ -5,8 +5,6 @@ import com.tlvlp.iot.server.scheduler.persistence.ScheduledEventRepository;
 import it.sauronsoftware.cron4j.SchedulingPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
@@ -17,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduledEventService {
@@ -30,12 +29,12 @@ public class ScheduledEventService {
         this.eventScheduler = eventScheduler;
     }
 
-    public List<ScheduledEvent> getAllEvents() {
-        return repository.findAll();
-    }
-
-    public List<ScheduledEvent> getEventsByExample(ScheduledEvent exampleEvent) {
-        return repository.findAll(Example.of(exampleEvent, ExampleMatcher.matching().withIgnoreNullValues()));
+    public List<ScheduledEvent> getAllEventsFromList(List<String> eventIDList) {
+        return eventIDList.stream()
+                .map(eventID -> repository.findById(eventID))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     public String createOrUpdateEvent(ScheduledEvent event) throws EventException, IllegalArgumentException {
@@ -99,7 +98,7 @@ public class ScheduledEventService {
     }
 
     public void scheduleAllEventsFromDB() {
-        List<ScheduledEvent> allEvents = getAllEvents();
+        List<ScheduledEvent> allEvents = repository.findAll();
         int eventNum = allEvents.size();
         log.info("Scheduling events from the database: {}", eventNum);
         allEvents.forEach(event -> {
