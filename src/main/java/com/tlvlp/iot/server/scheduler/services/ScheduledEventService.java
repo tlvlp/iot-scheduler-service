@@ -38,7 +38,7 @@ public class ScheduledEventService {
         return repository.findAll(Example.of(exampleEvent, ExampleMatcher.matching().withIgnoreNullValues()));
     }
 
-    public ScheduledEvent createEvent(ScheduledEvent event) throws EventException, IllegalArgumentException {
+    public String createOrUpdateEvent(ScheduledEvent event) throws EventException, IllegalArgumentException {
         checkEventValidity(event);
         String eventID = event.getEventID();
         if (!isValidString(eventID)) {
@@ -51,7 +51,7 @@ public class ScheduledEventService {
         event.setLastUpdated(LocalDateTime.now());
         repository.save(event);
         log.info("Event saved: {}", event);
-        return event;
+        return event.getEventID();
     }
 
     private void checkEventValidity(ScheduledEvent event) throws EventException {

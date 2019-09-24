@@ -55,19 +55,19 @@ class ScheduledEventServiceTest {
     @DisplayName("Add new schedule")
     void createEvent_NewEvent() throws EventException {
         // given
-        String newSchedulerID = "id";
+        var newSchedulerID = "id";
         given(eventScheduler.addSchedule(any(ScheduledEvent.class))).willReturn(newSchedulerID);
         given(repository.save(any(ScheduledEvent.class))).willReturn(new ScheduledEvent());
 
         // when
-        ScheduledEvent newEvent = scheduledEventService.createEvent(event);
+        String eventID = scheduledEventService.createOrUpdateEvent(event);
 
         // then
         then(repository).should().save(captor.capture());
         then(repository).shouldHaveNoMoreInteractions();
         then(eventScheduler).shouldHaveZeroInteractions();
 
-        assertNotNull(newEvent, "Event is not null");
+        assertNotNull(eventID, "Event ID is not null");
         assertEquals(captor.getValue().getSchedulerID(), newSchedulerID,
                 "Scheduler ID is added and matches the one provided by the Event Scheduler");
         assertNotNull(captor.getValue().getEventID(), "EventID is generated");
@@ -78,10 +78,10 @@ class ScheduledEventServiceTest {
     @DisplayName("Add new schedule and remove old schedule")
     void createEvent_OldEvent() throws EventException {
         // given
-        String oldEventID = "oldEventID";
-        String oldSchedulerID = "oldSchedulerID";
-        String newSchedulerID = "newSchedulerID";
-        LocalDateTime oldUpdateTime = LocalDateTime.now().minusDays(1);
+        var oldEventID = "oldEventID";
+        var oldSchedulerID = "oldSchedulerID";
+        var newSchedulerID = "newSchedulerID";
+        var oldUpdateTime = LocalDateTime.now().minusDays(1);
         event
                 .setEventID(oldEventID)
                 .setSchedulerID(oldSchedulerID)
@@ -92,14 +92,14 @@ class ScheduledEventServiceTest {
         given(repository.findById(oldEventID)).willReturn(Optional.of(event));
 
         // when
-        ScheduledEvent newEvent = scheduledEventService.createEvent(event);
+        String eventID = scheduledEventService.createOrUpdateEvent(event);
 
         // then
         then(repository).should().findById(oldEventID);
         then(eventScheduler).should().removeSchedule(event);
         then(repository).should().save(captor.capture());
 
-        assertNotNull(newEvent, "Event is not null");
+        assertNotNull(eventID, "Event ID is not null");
         assertEquals(captor.getValue().getEventID(), oldEventID, "EventID remains unchanged");
         assertNotEquals(captor.getValue().getLastUpdated(), oldUpdateTime,
                 "Last update timestamp is updated");
@@ -111,35 +111,35 @@ class ScheduledEventServiceTest {
     @DisplayName("Add new schedule with invalid Cron schedule")
     void createEventInvalidCronschedule() {
         event.setCronSchedule(null);
-        assertThrows(EventException.class, () -> scheduledEventService.createEvent(event));
+        assertThrows(EventException.class, () -> scheduledEventService.createOrUpdateEvent(event));
     }
 
     @Test
     @DisplayName("Add new schedule with invalid Info")
     void createEventInvalidInfo() {
         event.setInfo(null);
-        assertThrows(EventException.class, () -> scheduledEventService.createEvent(event));
+        assertThrows(EventException.class, () -> scheduledEventService.createOrUpdateEvent(event));
     }
 
     @Test
     @DisplayName("Add new schedule with invalid Payload")
     void createEventInvalidPayload() {
         event.setPayload(null);
-        assertThrows(EventException.class, () -> scheduledEventService.createEvent(event));
+        assertThrows(EventException.class, () -> scheduledEventService.createOrUpdateEvent(event));
     }
 
     @Test
     @DisplayName("Add new schedule with invalid TargetURL")
     void createEventInvalidTargetURL() {
         event.setTargetURL(null);
-        assertThrows(EventException.class, () -> scheduledEventService.createEvent(event));
+        assertThrows(EventException.class, () -> scheduledEventService.createOrUpdateEvent(event));
     }
 
     @Test
     @DisplayName("Schedule persisted events on startup")
     void scheduleAllEventsFromDB() {
         // given
-        String newSchedulerID = "id";
+        var newSchedulerID = "id";
         List<ScheduledEvent> allEvents = Arrays.asList(event, event, event);
         given(repository.findAll()).willReturn(allEvents);
         given(eventScheduler.addSchedule(any(ScheduledEvent.class))).willReturn(newSchedulerID);
@@ -163,7 +163,7 @@ class ScheduledEventServiceTest {
     @Test
     void deleteEventById() {
         // given
-        String eventID = "eventID";
+        var eventID = "eventID";
         given(repository.findById(eventID)).willReturn(Optional.of(event));
 
         // when

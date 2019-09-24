@@ -94,7 +94,7 @@ The list of events matching the query or an empty list
 
 ### POST Create or modify events:
 
-Creates a new ScheduledEvent or updates and existing one and returns it for later reference.
+Creates a new ScheduledEvent or updates and existing one and returns the eventID.
 
 #### Related global variables:
 - ${SCHEDULER_SERVICE_API_POST_EVENT}
@@ -147,7 +147,7 @@ RequestBody:
 ```
 
 #### Output:
-The created or updated event (in the same format as above)
+The eventID of the created / updated event
 
 
 ### DELETE event by eventID:
