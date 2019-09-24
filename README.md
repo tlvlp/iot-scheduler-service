@@ -29,7 +29,7 @@ Takes a list of eventIds and returns the corresponding events
 
 #### Input:
 RequestBody:
-- List<**eventID**>: String - event ID
+- List of **eventID**
 
 ```
 {
