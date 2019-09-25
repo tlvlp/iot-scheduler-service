@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Validation;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,14 +39,14 @@ public class ScheduledEventService {
     }
 
     public String createOrUpdateEvent(ScheduledEvent event) throws EventException, IllegalArgumentException {
-        checkEventValidity(event);
-        String eventID = event.getEventID();
-        if (!isValidString(eventID)) {
+        var eventID = event.getEventID();
+        if (eventID == null) {
             event.setEventID(getNewEventID());
         } else {
             Optional<ScheduledEvent> eventDB = repository.findById(eventID);
             eventDB.ifPresent(e -> eventScheduler.removeSchedule(e));
         }
+        checkEventValidity(event);
         event.setSchedulerID(eventScheduler.addSchedule(event));
         event.setLastUpdated(LocalDateTime.now());
         repository.save(event);
@@ -54,23 +55,18 @@ public class ScheduledEventService {
     }
 
     private void checkEventValidity(ScheduledEvent event) throws EventException {
-        if (!isValidString(event.getCronSchedule()) || !isValidCronPattern(event.getCronSchedule())) {
-            throw new EventException("Event cronSchedule must be a valid String and CRON pattern!");
-        } else if (!isValidURL(event.getTargetURL())) {
-            throw new EventException("Event targetURI must be a valid URL!");
-        } else if (!isValidString(event.getInfo())) {
-            throw new EventException("Event info must be a valid String!");
-        } else if (event.getPayload() == null) {
-            throw new EventException("Event payload must be a valid String!");
+        var validationProblems =
+                Validation.buildDefaultValidatorFactory().getValidator().validate(event);
+        if (!validationProblems.isEmpty()) {
+            throw new EventException(validationProblems.toString());
         }
-    }
-
-    private Boolean isValidString(String str) {
-        return str != null && !str.isEmpty();
-    }
-
-    private Boolean isValidCronPattern(String str) {
-        return SchedulingPattern.validate(str);
+        // TODO: Validate these through the validation api as well
+        if (!SchedulingPattern.validate(event.getCronSchedule())) {
+            throw new EventException("cronSchedule must be a valid cron pattern");
+        }
+        if (!isValidURL(event.getTargetURL())) {
+            throw new EventException("Target URL must be a valid url pattern");
+        }
     }
 
     private Boolean isValidURL(String str) {
@@ -81,6 +77,7 @@ public class ScheduledEventService {
             return false;
         }
     }
+
 
     private String getNewEventID() {
         return String.format("%s-EVENT-%S", LocalDate.now().toString(), UUID.randomUUID().toString());

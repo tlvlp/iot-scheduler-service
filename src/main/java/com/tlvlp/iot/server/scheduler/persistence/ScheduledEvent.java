@@ -1,8 +1,13 @@
 package com.tlvlp.iot.server.scheduler.persistence;
 
+import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
@@ -13,10 +18,15 @@ public class ScheduledEvent {
     @Id
     private String eventID;
     private String schedulerID;
+    @NotBlank
     private String cronSchedule;
+    @URL
     private String targetURL;
+    @NotNull
     private String info;
+    @PastOrPresent
     private LocalDateTime lastUpdated;
+    @NotEmpty
     private Map payload;
 
     @Override

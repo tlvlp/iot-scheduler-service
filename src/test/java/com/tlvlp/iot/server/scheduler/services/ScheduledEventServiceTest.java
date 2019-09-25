@@ -75,11 +75,8 @@ class ScheduledEventServiceTest {
         given(repository.findById("eventID_1")).willReturn(Optional.of(new ScheduledEvent()));
         given(repository.findById("eventID_2")).willReturn(Optional.empty());
 
-
         // when
         var eventList = scheduledEventService.getAllEventsFromList(eventIDList);
-
-        System.out.println(eventList);
 
         // then
         then(repository).should(times(2)).findById(anyString());
@@ -168,7 +165,7 @@ class ScheduledEventServiceTest {
 
     @Test
     @DisplayName("Add new schedule with invalid TargetURL")
-    void createEventInvalidTargetURL() {
+    void createEventInvalidTargetURL() throws EventException {
         event.setTargetURL(null);
         assertThrows(EventException.class, () -> scheduledEventService.createOrUpdateEvent(event));
     }
@@ -210,6 +207,12 @@ class ScheduledEventServiceTest {
         // then
         then(eventScheduler).should().removeSchedule(any(ScheduledEvent.class));
         then(repository).should().deleteById(event.getEventID());
+
+    }
+
+    @Test
+    void test() {
+
 
     }
 
