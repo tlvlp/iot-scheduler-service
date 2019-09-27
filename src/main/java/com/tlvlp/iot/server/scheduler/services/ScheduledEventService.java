@@ -38,7 +38,7 @@ public class ScheduledEventService {
                 .collect(Collectors.toList());
     }
 
-    public String createOrUpdateEvent(ScheduledEvent event) throws EventException, IllegalArgumentException {
+    public String createOrUpdateEvent(ScheduledEvent event) throws EventException {
         var eventID = event.getEventID();
         if (eventID == null) {
             event.setEventID(getNewEventID());
