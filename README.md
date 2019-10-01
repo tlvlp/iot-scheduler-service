@@ -52,17 +52,16 @@ The list of events matching the eventIDs
 
 ### POST Create or modify events:
 
-Creates a new ScheduledEvent or updates and existing one and returns the eventID.
+Creates or updates a ScheduledEvent for sending outgoing MQTT messages and returns the eventID.
 
 #### Related global variables:
-- ${SCHEDULER_SERVICE_API_POST_EVENT}
+- ${SCHEDULER_SERVICE_API_POST_MQTT_MESSAGE_SEND_EVENT}
 
 #### Input:
 RequestBody:
 - **eventID**: String - event ID. _NOTE_: if it's included then the event with the matching ID will be updated.
 - **schedulerID**: String - the ID assigned by the scheduler
 - **cronSchedule**: String - must be a valid CRON expression (cron4j)
-- **targetURL**: String - targeted API endpoint
 - **info**: String - a human readable information about the scheduled event
 - **lastUpdated**: LocalDateTime of the last update
 - **payload**: Map<String, String> containing the payload to be delivered to the **targetUri** 
@@ -74,7 +73,6 @@ RequestBody:
 ```
 {
     "cronSchedule": "* * * * *",
-    "targetURL": "http://mqtt-client:8100/messages",
     "info": "Posts an mqtt message every minute",
     "payload": {
         "topic": "/global/test",
@@ -92,7 +90,6 @@ RequestBody:
 {
     "eventID": "2019-08-24-9229F2B8-377F-440C-B251-23F866C927AC",
     "cronSchedule": "* * * * *",
-    "targetURL": "http://mqtt-client:8100/messages",
     "info": "Posts an mqtt message every minute",
     "payload": {
         "topic": "/global/test",

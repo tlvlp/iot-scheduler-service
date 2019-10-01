@@ -8,8 +8,18 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateBean {
 
+    private Properties properties;
+
+    public RestTemplateBean(Properties properties) {
+        this.properties = properties;
+    }
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+        return builder
+                .basicAuthentication(
+                        properties.getAPI_GATEWAY_SECURITY_USER_BACKEND(),
+                        properties.getAPI_GATEWAY_SECURITY_PASS_BACKEND())
+                .build();
     }
 }

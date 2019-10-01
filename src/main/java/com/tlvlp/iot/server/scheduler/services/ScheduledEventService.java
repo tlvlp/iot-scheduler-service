@@ -1,5 +1,6 @@
 package com.tlvlp.iot.server.scheduler.services;
 
+import com.tlvlp.iot.server.scheduler.config.Properties;
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEvent;
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEventRepository;
 import it.sauronsoftware.cron4j.SchedulingPattern;
@@ -24,10 +25,13 @@ public class ScheduledEventService {
     private static final Logger log = LoggerFactory.getLogger(ScheduledEventService.class);
     private ScheduledEventRepository repository;
     private EventScheduler eventScheduler;
+    private Properties properties;
 
-    public ScheduledEventService(ScheduledEventRepository repository, EventScheduler eventScheduler) {
+
+    public ScheduledEventService(ScheduledEventRepository repository, EventScheduler eventScheduler, Properties properties) {
         this.repository = repository;
         this.eventScheduler = eventScheduler;
+        this.properties = properties;
     }
 
     public List<ScheduledEvent> getAllEventsFromList(List<String> eventIDList) {
@@ -36,6 +40,11 @@ public class ScheduledEventService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    public String createOrUpdateMqttSendEvent(ScheduledEvent event) throws EventException {
+        event.setTargetURL(getPostMqttMessageUrl());
+        return createOrUpdateEvent(event);
     }
 
     public String createOrUpdateEvent(ScheduledEvent event) throws EventException {
@@ -52,6 +61,13 @@ public class ScheduledEventService {
         repository.save(event);
         log.info("Event saved: {}", event);
         return event.getEventID();
+    }
+
+    private String getPostMqttMessageUrl() {
+        return String.format("http://%s:%s%s",
+                properties.getAPI_GATEWAY_NAME(),
+                properties.getAPI_GATEWAY_PORT(),
+                properties.getAPI_GATEWAY_API_OUTGOING_MQTT_MESSAGE());
     }
 
     private void checkEventValidity(ScheduledEvent event) throws EventException {

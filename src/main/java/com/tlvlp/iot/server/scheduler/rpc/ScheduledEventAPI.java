@@ -21,10 +21,10 @@ public class ScheduledEventAPI {
         this.eventService = eventService;
     }
 
-    @PostMapping("${SCHEDULER_SERVICE_API_POST_EVENT}")
+    @PostMapping("${SCHEDULER_SERVICE_API_POST_MQTT_MESSAGE_SEND_EVENT}")
     public ResponseEntity<String> createOrUpdateEvent(@RequestBody ScheduledEvent event) {
         try {
-            return new ResponseEntity<>(eventService.createOrUpdateEvent(event), HttpStatus.OK);
+            return new ResponseEntity<>(eventService.createOrUpdateMqttSendEvent(event), HttpStatus.OK);
         } catch (EventException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

@@ -21,7 +21,6 @@ public class ApiCallerService {
 
     public void postPayloadToTarget(ScheduledEvent event) {
         try {
-
             restTemplate.postForEntity(
                     event.getTargetURL(),
                     event.getPayload(),
