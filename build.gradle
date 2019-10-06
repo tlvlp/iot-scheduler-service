@@ -11,7 +11,7 @@ sourceCompatibility = '11'
 ext {
 	mockitoVersion = "3.+"
 	projectName = 'iot-scheduler-service'
-	dockerRepo = 'docker.tlvlp.com'
+	dockerRepo = 'tlvlp'
 	mainClass = 'com.tlvlp.iot.server.scheduler.Application'
 	servicePort = 8300
 }
