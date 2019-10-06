@@ -31,12 +31,9 @@ public class ScheduledEventAPI {
     }
 
     @PostMapping("${SCHEDULER_SERVICE_API_DELETE_EVENT}")
-    public ResponseEntity<String> deleteEvent(@RequestBody ScheduledEvent event) {
-        try {
-            return new ResponseEntity<>(eventService.deleteEvent(event), HttpStatus.OK);
-        } catch (EventException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    public ResponseEntity deleteEvent(@RequestBody ScheduledEvent event) {
+        eventService.deleteEvent(event);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("${SCHEDULER_SERVICE_API_GET_EVENTS_FROM_LIST}")
