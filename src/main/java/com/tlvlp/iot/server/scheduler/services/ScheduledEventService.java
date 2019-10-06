@@ -99,7 +99,7 @@ public class ScheduledEventService {
         return String.format("%s-EVENT-%S", LocalDate.now().toString(), UUID.randomUUID().toString());
     }
 
-    public void deleteEvent(ScheduledEvent event) {
+    public String deleteEvent(ScheduledEvent event) throws EventException {
         var eventID = event.getEventID();
         Optional<ScheduledEvent> eventDB = repository.findById(eventID);
         if (eventDB.isPresent()) {
@@ -107,6 +107,7 @@ public class ScheduledEventService {
             repository.deleteById(eventID);
             log.info("Event deleted with ID: {}", eventID);
         }
+        return eventID;
     }
 
     public void scheduleAllEventsFromDB() {
