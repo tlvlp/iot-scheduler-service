@@ -1,0 +1,120 @@
+package com.tlvlp.iot.server.scheduler.persistence;
+
+import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
+
+@Document(collection = "events")
+public class ScheduledEvent {
+
+    @Id
+    private String eventID;
+    private String schedulerID;
+    @NotBlank
+    private String cronSchedule;
+    @URL
+    private String targetURL;
+    @NotNull
+    private String info;
+    @PastOrPresent
+    private LocalDateTime lastUpdated;
+    @NotEmpty
+    private Map payload;
+
+    @Override
+    public String toString() {
+        return "ScheduledEvent{" +
+                "eventID='" + eventID + '\'' +
+                ", schedulerID='" + schedulerID + '\'' +
+                ", cronSchedule='" + cronSchedule + '\'' +
+                ", targetURL='" + targetURL + '\'' +
+                ", info='" + info + '\'' +
+                ", lastUpdated=" + lastUpdated +
+                ", payload=" + payload +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScheduledEvent event = (ScheduledEvent) o;
+        return eventID.equals(event.eventID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventID);
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public ScheduledEvent setEventID(String eventID) {
+        this.eventID = eventID;
+        return this;
+    }
+
+    public String getSchedulerID() {
+        return schedulerID;
+    }
+
+    public ScheduledEvent setSchedulerID(String schedulerID) {
+        this.schedulerID = schedulerID;
+        return this;
+    }
+
+    public String getCronSchedule() {
+        return cronSchedule;
+    }
+
+    public ScheduledEvent setCronSchedule(String cronSchedule) {
+        this.cronSchedule = cronSchedule;
+        return this;
+    }
+
+    public String getTargetURL() {
+        return targetURL;
+    }
+
+    public ScheduledEvent setTargetURL(String targetURL) {
+        this.targetURL = targetURL;
+        return this;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public ScheduledEvent setInfo(String info) {
+        this.info = info;
+        return this;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public ScheduledEvent setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+        return this;
+    }
+
+    public Map getPayload() {
+        return payload;
+    }
+
+    public ScheduledEvent setPayload(Map payload) {
+        this.payload = payload;
+        return this;
+    }
+}
