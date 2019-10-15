@@ -13,6 +13,9 @@ This project is using the [Palantir Docker Gradle plugin](https://github.com/pal
 All configuration can be found in the [Gradle build file](build.gradle) file 
 and is recommended to be run with the docker/dockerTagsPush task.
 
+## Dockerhub
+Repository: [tlvlp/iot-scheduler-service](https://cloud.docker.com/repository/docker/tlvlp/iot-scheduler-service)
+
 ## Deployment
 - This service is currently designed as **stateful** and should only have one instance running per Docker Swarm Stack.
 - For settings and deployment details see the project's [deployment repository](https://github.com/tlvlp/iot-server-deployment)
