@@ -1,5 +1,6 @@
 package com.tlvlp.iot.server.scheduler.services;
 
+import com.tlvlp.iot.server.scheduler.config.RestTemplateFactory;
 import com.tlvlp.iot.server.scheduler.persistence.ScheduledEvent;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sauronsoftware.cron4j.SchedulingPattern;
@@ -12,15 +13,16 @@ public class EventScheduler {
 
     private static final Logger log = LoggerFactory.getLogger(EventScheduler.class);
     private Scheduler scheduler;
-    private EventExecutor eventExecutor;
+    private RestTemplateFactory restTemplateFactory;
 
-    public EventScheduler(Scheduler scheduler, EventExecutor eventExecutor) {
+    public EventScheduler(Scheduler scheduler, RestTemplateFactory restTemplateFactory) {
         this.scheduler = scheduler;
-        this.eventExecutor = eventExecutor;
+        this.restTemplateFactory = restTemplateFactory;
     }
 
     String addSchedule(ScheduledEvent event) {
-        eventExecutor.setEvent(event);
+        var restTemplate = restTemplateFactory.getRestTemplateWithCredentials();
+        var eventExecutor = new EventExecutor(event, restTemplate);
         String schedulerID = scheduler.schedule(new SchedulingPattern(event.getCronSchedule()), eventExecutor);
         log.info("Added event to scheduler. schedulerID: {}", schedulerID);
         return schedulerID;

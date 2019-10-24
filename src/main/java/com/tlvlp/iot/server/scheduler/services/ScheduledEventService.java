@@ -111,11 +111,12 @@ public class ScheduledEventService {
     }
 
     public void scheduleAllEventsFromDB() {
-        List<ScheduledEvent> allEvents = repository.findAll();
+        var allEvents = repository.findAll();
         int eventNum = allEvents.size();
         log.info("Scheduling events from the database: {}", eventNum);
         allEvents.forEach(event -> {
-            event.setSchedulerID(eventScheduler.addSchedule(event));
+            var id = eventScheduler.addSchedule(event);
+            event.setSchedulerID(id);
             repository.save(event);
         });
     }
